@@ -1,0 +1,67 @@
+columns:
+  class : str
+  cap-shape : str
+  cap-surface : str
+  cap-color : str
+  bruises : str
+  odor : str
+  gill-attachment : str
+  gill-spacing : str
+  gill-size : str
+  gill-color : str
+  stalk-shape : str
+  stalk-root : str
+  stalk-surface-above-ring : str
+  stalk-surface-below-ring : str
+  stalk-color-above-ring : str
+  stalk-color-below-ring : str
+  veil-type : str
+  veil-color : str
+  ring-number : str
+  ring-type : str
+  spore-print-color : str
+  population : str
+  habitat : str
+
+
+
+
+categorical_columns:
+  - cap-shape
+  - cap-surface
+  - cap-color
+  - bruises
+  - odor
+  - gill-attachment
+  - gill-spacing
+  - gill-size
+  - gill-color
+  - stalk-shape
+  - stalk-root
+  - stalk-surface-above-ring
+  - stalk-surface-below-ring
+  - stalk-color-above-ring
+  - stalk-color-below-ring
+  - veil-type
+  - veil-color
+  - ring-number
+  - ring-type
+  - spore-print-color
+  - population
+  - habitat
+
+
+
+del_cols :
+  - class
+  - gill-attachment
+  - stalk-shape
+  - stalk-surface-below-ring
+  - stalk-color-below-ring
+  - veil-type
+  - veil-color
+  - ring-number
+
+
+target_column: class
+

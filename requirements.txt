@@ -1,0 +1,16 @@
+dill
+evidently
+Flask
+gunicorn
+ipykernel
+ipynb
+matplotlib
+numpy
+pandas
+pyaml
+requests
+scikit-learn
+scipy
+six
+sklearn-pandas
+urllib3
