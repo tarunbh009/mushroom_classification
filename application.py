@@ -30,11 +30,11 @@ from mushroom.logger import get_log_dataframe
 MUSHROOM_DATA_KEY = "mushroom_data"
 MEDIAN_MUSHROOM_VALUE_KEY = "class_"
 
-app = Flask(__name__)
+application = Flask(__name__)
 
 
-@app.route('/artifact', defaults={'req_path': 'mushroom'})
-@app.route('/artifact/<path:req_path>')
+@application.route('/artifact', defaults={'req_path': 'mushroom'})
+@application.route('/artifact/<path:req_path>')
 def render_artifact_dir(req_path):
     os.makedirs("mushroom", exist_ok=True)
     # Joining the base and the requested path
@@ -67,7 +67,7 @@ def render_artifact_dir(req_path):
     return render_template('files.html', result=result)
 
 
-@app.route('/', methods=['GET', 'POST'])
+@application.route('/', methods=['GET', 'POST'])
 def index():
     try:
         return render_template('index.html')
@@ -75,7 +75,7 @@ def index():
         return str(e)
 
 
-@app.route('/view_experiment_hist', methods=['GET', 'POST'])
+@application.route('/view_experiment_hist', methods=['GET', 'POST'])
 def view_experiment_history():
     experiment_df = Pipeline.get_experiments_status()
     context = {
@@ -84,7 +84,7 @@ def view_experiment_history():
     return render_template('experiment_history.html', context=context)
 
 
-@app.route('/train', methods=['GET', 'POST'])
+@application.route('/train', methods=['GET', 'POST'])
 def train():
     message = ""
     pipeline = Pipeline(config=configuration(current_time_stamp=get_current_time_stamp()))
@@ -100,7 +100,7 @@ def train():
     return render_template('train.html', context=context)
 
 
-@app.route('/predict', methods=['GET', 'POST'])
+@application.route('/predict', methods=['GET', 'POST'])
 def predict():
     logging.info("Prediction started")
     context = {
@@ -170,8 +170,8 @@ def predict():
     return render_template("predict.html", context=context)
 
 
-@app.route('/saved_models', defaults={'req_path': 'saved_models'})
-@app.route('/saved_models/<path:req_path>')
+@application.route('/saved_models', defaults={'req_path': 'saved_models'})
+@application.route('/saved_models/<path:req_path>')
 def saved_models_dir(req_path):
     os.makedirs("saved_models", exist_ok=True)
     # Joining the base and the requested path
@@ -197,7 +197,7 @@ def saved_models_dir(req_path):
     return render_template('saved_models_files.html', result=result)
 
 
-@app.route("/update_model_config", methods=['GET', 'POST'])
+@application.route("/update_model_config", methods=['GET', 'POST'])
 def update_model_config():
     try:
         if request.method == 'POST':
@@ -216,8 +216,8 @@ def update_model_config():
         return str(e)
 
 
-@app.route(f'/logs', defaults={'req_path': f'{LOG_FOLDER_NAME}'})
-@app.route(f'/{LOG_FOLDER_NAME}/<path:req_path>')
+@application.route(f'/logs', defaults={'req_path': f'{LOG_FOLDER_NAME}'})
+@application.route(f'/{LOG_FOLDER_NAME}/<path:req_path>')
 def render_log_dir(req_path):
     os.makedirs(LOG_FOLDER_NAME, exist_ok=True)
     # Joining the base and the requested path
@@ -246,4 +246,4 @@ def render_log_dir(req_path):
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+    application.run(host='0.0.0.0')
