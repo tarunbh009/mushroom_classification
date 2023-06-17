@@ -127,7 +127,7 @@ def replace_invalid_values_with_null(data):
 
     """
                             Method Name: is_null_present
-                            Description: This method replaces invalid values i.e. '?' with null, as discussed in EDA.
+                            Description: This method replaces invalid values i.e. '?' with null.
 
     """
 
