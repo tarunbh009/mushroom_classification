@@ -10,7 +10,7 @@ import sys
 from collections import namedtuple
 from typing import List
 from mushroom.logger import logging
-from sklearn.metrics import r2_score,mean_squared_error
+from sklearn.metrics import r2_score,mean_squared_error,accuracy_score
 GRID_SEARCH_KEY = 'grid_search'
 MODULE_KEY = 'module'
 CLASS_KEY = 'class'
@@ -35,13 +35,74 @@ BestModel = namedtuple("BestModel", ["model_serial_number",
                                      "best_score", ])
 
 MetricInfoArtifact = namedtuple("MetricInfoArtifact",
-                                ["model_name", "model_object", "train_rmse", "test_rmse", "train_accuracy",
+                                ["model_name", "model_object", "train_accuracy",
                                  "test_accuracy", "model_accuracy", "index_number"])
 
 
 
-def evaluate_classification_model(model_list: list, X_train:np.ndarray, y_train:np.ndarray, X_test:np.ndarray, y_test:np.ndarray, base_accuracy:float=0.6)->MetricInfoArtifact:
-    pass
+def evaluate_classification_model(model_list: List, X_train: np.ndarray, y_train: np.ndarray, X_test: np.ndarray,
+                                  y_test: np.ndarray, base_accuracy: float = 0.6) -> MetricInfoArtifact:
+    """
+    Description:
+    This function compares multiple classification models and returns the best model.
+
+    Params:
+    model_list: List of models
+    X_train: Training dataset input feature
+    y_train: Training dataset target feature
+    X_test: Testing dataset input feature
+    y_test: Testing dataset target feature
+
+    Returns:
+    A named tuple (MetricInfoArtifact) containing the best model's information.
+    """
+
+    try:
+        index_number = 0
+        metric_info_artifact = None
+
+        for model in model_list:
+            model_name = str(model)  # Getting model name based on model object
+            logging.info(f"{'>>'*30}Started evaluating model: [{type(model).__name__}] {'<<'*30}")
+
+            # Getting predictions for training and testing dataset
+            y_train_pred = model.predict(X_train)
+            y_test_pred = model.predict(X_test)
+
+            # Calculating accuracy on training and testing dataset
+            train_accuracy = accuracy_score(y_train, y_train_pred)
+            test_accuracy = accuracy_score(y_test, y_test_pred)
+
+            # Calculating model accuracy as the harmonic mean of train_accuracy and test_accuracy
+            model_accuracy = (2 * (train_accuracy * test_accuracy)) / (train_accuracy + test_accuracy)
+
+            # Logging all important metrics
+            logging.info(f"{'>>'*30} Score {'<<'*30}")
+            logging.info(f"Train Accuracy:\t\t{train_accuracy}")
+            logging.info(f"Test Accuracy:\t\t{test_accuracy}")
+            logging.info(f"Model Accuracy:\t\t{model_accuracy}")
+
+            # If model accuracy is greater than or equal to the base accuracy, accept the model
+            if model_accuracy >= base_accuracy:
+                base_accuracy = model_accuracy
+                metric_info_artifact = MetricInfoArtifact(model_name=model_name,
+                                                          model_object=model,
+                                                          train_accuracy=train_accuracy,
+                                                          test_accuracy=test_accuracy,
+                                                          model_accuracy=model_accuracy,
+                                                          index_number=index_number)
+
+                logging.info(f"Acceptable model found: {metric_info_artifact}")
+
+            index_number += 1
+
+        if metric_info_artifact is None:
+            logging.info("No model found with higher accuracy than the base accuracy")
+
+        return metric_info_artifact
+
+    except Exception as e:
+        raise Exception(e)
 
 
 def evaluate_regression_model(model_list: list, X_train:np.ndarray, y_train:np.ndarray, X_test:np.ndarray, y_test:np.ndarray, base_accuracy:float=0.6) -> MetricInfoArtifact:
@@ -106,8 +167,6 @@ def evaluate_regression_model(model_list: list, X_train:np.ndarray, y_train:np.n
                 base_accuracy = model_accuracy
                 metric_info_artifact = MetricInfoArtifact(model_name=model_name,
                                                         model_object=model,
-                                                        train_rmse=train_rmse,
-                                                        test_rmse=test_rmse,
                                                         train_accuracy=train_acc,
                                                         test_accuracy=test_acc,
                                                         model_accuracy=model_accuracy,

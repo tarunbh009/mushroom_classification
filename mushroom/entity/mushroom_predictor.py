@@ -124,11 +124,11 @@ class MushroomPredictor:
             model_path = self.get_latest_model_path()
             model = load_object(file_path=model_path)
             predicted_value = model.predict(X)
-            # reverse_mapping = {1: 'p', 0: 'e'}
-            # median_mushroom_value=reverse_mapping[(round(median_mushroom_value[0]))]
-            threshold = 0.5
-            predicted_value_arr = np.where(predicted_value >= threshold, 'p', 'e')
-            median_mushroom_value = predicted_value_arr[0]
+            reverse_mapping = {1: 'p', 0: 'e'}
+            median_mushroom_value=reverse_mapping[(predicted_value[0])]
+            # threshold = 0.5
+            # predicted_value_arr = np.where(predicted_value >= threshold, 'p', 'e')
+            # median_mushroom_value = predicted_value_arr[0]
             return median_mushroom_value
         except Exception as e:
             raise MushroomException(e, sys) from e
